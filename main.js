@@ -1,12 +1,18 @@
 var canvas;
 var canvasContext;
-var ballx = 400 
+var score
+var ballx = 400
 var ballY = 300
-var ballSpeedX = 4
-var ballSpeedY = 2
+var ballSpeedX = -6
+var ballSpeedY = 5
 
 var leftPadY = 250;
-const PADDLE_HEIGHT = 200;
+var rightPadY = 250;
+var leftPlayerScore = 0
+var rightPlayerScore = 0
+const PADDLE_HEIGHT = 130;
+const PADDLE_THICC = 15
+
 
 class gameObject{
     constructor(color,x,y,h,w){
@@ -59,7 +65,8 @@ class gameObject{
     }
 }
 //left player
-var leftPlayer = new gameObject('white',1, leftPadY,PADDLE_HEIGHT,25)
+var leftPlayer = new gameObject('white', 1, leftPadY,PADDLE_HEIGHT, PADDLE_THICC)
+var rightPlayer = new gameObject('white', 1, rightPadY, PADDLE_HEIGHT, PADDLE_THICC)
 var Ball = new gameObject('white', ballx, ballY, 12, 12)
 
 getMousePosition = (e) =>{
@@ -73,9 +80,11 @@ getMousePosition = (e) =>{
     }
     }
 
-ballReset = () =>{
+ballReset = (dir) =>{
     ballx = canvas.width/2 - Ball.objectW()
     ballY = canvas.height/2 - Ball.objectH()
+    ballSpeedX = dir
+    ballSpeedY = dir
 }
 
 window.onload = function() {
@@ -94,17 +103,33 @@ window.onload = function() {
 }
 
 
+enemyComputerMovement = () =>{
+    var rightPadCenter = rightPadY + (PADDLE_HEIGHT/2)
+    if(rightPadCenter < ballY)
+    {
+        rightPadY  += 4.5
+    }
+    else
+    {
+        rightPadY -= 4.5
+    }
+}
+
 drawScene = () =>{
     canvasContext.fillStyle = 'black'
     canvasContext.fillRect(0,0, canvas.width, canvas.height)
 }
 drawEverything=()=>{
     drawScene()
+    enemyComputerMovement()
     leftPlayer.spawn()
-    leftPlayer.changeObjectPos(1, leftPadY)
-    ballx  = ballx + ballSpeedX
-    ballY = ballY + ballSpeedY
+    rightPlayer.spawn()
     Ball.spawnPlayer()
+    canvasContext.fillText(`${leftPlayerScore} : ${rightPlayerScore}`, 200,200)
+    leftPlayer.changeObjectPos(1, leftPadY)
+    rightPlayer.changeObjectPos(canvas.width - rightPlayer.objectW()-1, rightPadY)
+    ballx += ballSpeedX
+    ballY += ballSpeedY
     Ball.changeObjectPos(ballx,ballY)
     if(ballx < 0)
     {
@@ -114,13 +139,24 @@ drawEverything=()=>{
         }
         else
         {
-            ballReset()
+            console.log('Score for player Two')
+            rightPlayerScore++
+            ballReset(6)
         }
     }
 
-    if(ballx > canvas.width - Ball.objectW())
+    if(ballx > canvas.width)
     {
-        ballSpeedX  = -ballSpeedX
+        if(ballY > rightPadY && ballY < rightPadY + PADDLE_HEIGHT)
+        {
+            ballSpeedX = -ballSpeedX
+        }
+        else
+        {
+            console.log('Score for player One ')
+            leftPlayerScore++
+            ballReset(-6)
+        }
     }
 
     if(ballY < Ball.objectH() ){
