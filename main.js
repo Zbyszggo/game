@@ -5,7 +5,7 @@ var ballx = 400
 var ballY = 300
 var ballSpeedX = -6
 var ballSpeedY = 5
-
+var bounce = new Audio('bounce.wav')
 var leftPadY = 250;
 var rightPadY = 250;
 var leftPlayerScore = 0
@@ -125,7 +125,7 @@ drawEverything=()=>{
     leftPlayer.spawn()
     rightPlayer.spawn()
     Ball.spawnPlayer()
-    canvasContext.fillText(`${leftPlayerScore} : ${rightPlayerScore}`, 200,200)
+    canvasContext.fillText(`${leftPlayerScore} : ${rightPlayerScore}`, canvas.width/2,canvas.height/2)
     leftPlayer.changeObjectPos(1, leftPadY)
     rightPlayer.changeObjectPos(canvas.width - rightPlayer.objectW()-1, rightPadY)
     ballx += ballSpeedX
@@ -136,6 +136,7 @@ drawEverything=()=>{
         if(ballY > leftPadY && ballY < leftPadY + PADDLE_HEIGHT)
         {
             ballSpeedX = -ballSpeedX
+            bounce.play()
         }
         else
         {
@@ -150,6 +151,7 @@ drawEverything=()=>{
         if(ballY > rightPadY && ballY < rightPadY + PADDLE_HEIGHT)
         {
             ballSpeedX = -ballSpeedX
+            bounce.play()
         }
         else
         {
@@ -161,9 +163,11 @@ drawEverything=()=>{
 
     if(ballY < Ball.objectH() ){
         ballSpeedY = -ballSpeedY
+        bounce.play()
     }
     if(ballY > canvas.height - Ball.objectH())
     {
         ballSpeedY = -ballSpeedY
+        bounce.play()
     }
 }
