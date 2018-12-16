@@ -15,7 +15,6 @@ const WINNER_SCORE = 5
 const PADDLE_HEIGHT = 130;
 const PADDLE_THICC = 15
 
-
 class gameObject{
     constructor(color,x,y,h,w){
         this.color = color
@@ -89,10 +88,6 @@ ballReset = (dir) =>{
     ballYspeedY = 2
 }
 
-score = (score) => {
-    return score++
-}
-
 window.onload = function() {
     canvas = document.getElementById('screen')
     canvasContext = canvas.getContext('2d')
@@ -120,26 +115,28 @@ enemyComputerMovement = () =>{
         rightPadY -= 2.5
     }
 }
-restartGame = () =>{
+gameOver = () =>{
     ballSpeedX = 0
     ballSpeedY = 0
-    leftPlayerScore = 0
-    rightPlayerScore = 0
+    canvasContext.fillText('Winner winner twoja stara dinner ', 400, 400)
+}
+unpauseGame = () =>
+{
+    location.reload()
 }
 
 checkPlayersScore = () =>{
-    if(leftPlayerScore === WINNER_SCORE)
+    if(leftPlayerScore >= WINNER_SCORE)
     {
         console.log('Left Player Won!!')
-        restartGame()
+        gameOver()
     }
-    else if (rightPlayerScore === WINNER_SCORE)
+    else if (rightPlayerScore >= WINNER_SCORE)
     {
         console.log('Right Player Won!!')
-        restartGame()
+        gameOver()
     }
 }
-
 drawScene = () =>{
     canvasContext.fillStyle = 'black'
     canvasContext.fillRect(0,0, canvas.width, canvas.height)
@@ -150,13 +147,13 @@ drawEverything=()=>{
     leftPlayer.spawn()
     rightPlayer.spawn()
     Ball.spawnPlayer()
-    canvasContext.fillText(`${leftPlayerScore} : ${rightPlayerScore}`, canvas.width/2,canvas.height/2)
+    canvasContext.fillText(`${leftPlayerScore}`, 200, canvas.height/6)
+    canvasContext.fillText(`${rightPlayerScore}`, 600, canvas.height/6)
     leftPlayer.changeObjectPos(1, leftPadY)
     rightPlayer.changeObjectPos(canvas.width - rightPlayer.objectW()-1, rightPadY)
     ballx += ballSpeedX
     ballY += ballSpeedY
     Ball.changeObjectPos(ballx,ballY)
-
 
     if(ballx < 0)
     {
@@ -170,8 +167,7 @@ drawEverything=()=>{
         else
         {
             console.log('Score for player Two')
-            rightPlayerScore++
-            score(rightPlayerScore)
+            rightPlayerScore+=1
             ballReset(6)
             checkPlayersScore()
         }
@@ -190,7 +186,7 @@ drawEverything=()=>{
         {
 
             console.log('Score for player One ')
-            leftPlayerScore++
+            leftPlayerScore+=1
             ballReset(-6)
             checkPlayersScore()
         }
