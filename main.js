@@ -4,12 +4,14 @@ var score
 var ballx = 400
 var ballY = 300
 var ballSpeedX = -6
-var ballSpeedY = 5
-var bounce = new Audio('bounce.wav')
+var ballSpeedY = 2
+var bounce = document.createElement('Audio')
+bounce.src = 'bounce.wav'
 var leftPadY = 250;
 var rightPadY = 250;
 var leftPlayerScore = 0
 var rightPlayerScore = 0
+const WINNER_SCORE = 5
 const PADDLE_HEIGHT = 130;
 const PADDLE_THICC = 15
 
@@ -84,7 +86,11 @@ ballReset = (dir) =>{
     ballx = canvas.width/2 - Ball.objectW()
     ballY = canvas.height/2 - Ball.objectH()
     ballSpeedX = dir
-    ballSpeedY = dir
+    ballYspeedY = 2
+}
+
+score = (score) => {
+    return score++
 }
 
 window.onload = function() {
@@ -107,11 +113,30 @@ enemyComputerMovement = () =>{
     var rightPadCenter = rightPadY + (PADDLE_HEIGHT/2)
     if(rightPadCenter < ballY)
     {
-        rightPadY  += 4.5
+        rightPadY  += 2.5
     }
     else
     {
-        rightPadY -= 4.5
+        rightPadY -= 2.5
+    }
+}
+restartGame = () =>{
+    ballSpeedX = 0
+    ballSpeedY = 0
+    leftPlayerScore = 0
+    rightPlayerScore = 0
+}
+
+checkPlayersScore = () =>{
+    if(leftPlayerScore === WINNER_SCORE)
+    {
+        console.log('Left Player Won!!')
+        restartGame()
+    }
+    else if (rightPlayerScore === WINNER_SCORE)
+    {
+        console.log('Right Player Won!!')
+        restartGame()
     }
 }
 
@@ -131,18 +156,24 @@ drawEverything=()=>{
     ballx += ballSpeedX
     ballY += ballSpeedY
     Ball.changeObjectPos(ballx,ballY)
+
+
     if(ballx < 0)
     {
         if(ballY > leftPadY && ballY < leftPadY + PADDLE_HEIGHT)
         {
             ballSpeedX = -ballSpeedX
+            var deltaY = ballY - (leftPadY + PADDLE_HEIGHT/2)
+            ballSpeedY = deltaY * 0.1
             bounce.play()
         }
         else
         {
             console.log('Score for player Two')
             rightPlayerScore++
+            score(rightPlayerScore)
             ballReset(6)
+            checkPlayersScore()
         }
     }
 
@@ -150,14 +181,18 @@ drawEverything=()=>{
     {
         if(ballY > rightPadY && ballY < rightPadY + PADDLE_HEIGHT)
         {
+            var deltaY = ballY - (rightPadY + PADDLE_HEIGHT/2)
+            ballSpeedY = deltaY *0.1 
             ballSpeedX = -ballSpeedX
             bounce.play()
         }
         else
         {
+
             console.log('Score for player One ')
             leftPlayerScore++
             ballReset(-6)
+            checkPlayersScore()
         }
     }
 
