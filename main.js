@@ -5,8 +5,8 @@ var ballx = 400
 var ballY = 300
 var ballSpeedX = -6
 var ballSpeedY = 2
-var bounce = document.createElement('Audio')
-bounce.src = 'bounce.wav'
+var bounce = document.createElement('audio')
+bounce.src =  './bounce.wav'
 var leftPadY = 250;
 var rightPadY = 250;
 var leftPlayerScore = 0
@@ -106,7 +106,7 @@ window.onload = function() {
 
 enemyComputerMovement = () =>{
     var rightPadCenter = rightPadY + (PADDLE_HEIGHT/2)
-    if(rightPadCenter < ballY)
+    if(rightPadCenter < ballY-4)
     {
         rightPadY  += 2.5
     }
@@ -118,7 +118,6 @@ enemyComputerMovement = () =>{
 gameOver = () =>{
     ballSpeedX = 0
     ballSpeedY = 0
-    canvasContext.fillText('Winner winner twoja stara dinner ', 400, 400)
 }
 unpauseGame = () =>
 {
@@ -155,7 +154,7 @@ drawEverything=()=>{
     ballY += ballSpeedY
     Ball.changeObjectPos(ballx,ballY)
 
-    if(ballx < 0)
+    if(ballx < 15)
     {
         if(ballY > leftPadY && ballY < leftPadY + PADDLE_HEIGHT)
         {
@@ -173,7 +172,7 @@ drawEverything=()=>{
         }
     }
 
-    if(ballx > canvas.width)
+    if(ballx > canvas.width-16)
     {
         if(ballY > rightPadY && ballY < rightPadY + PADDLE_HEIGHT)
         {
